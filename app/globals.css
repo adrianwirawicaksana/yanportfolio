@@ -1,3 +1,4 @@
+@import url("https://fonts.cdnfonts.com/css/minguwest");
 @import "tailwindcss";
 
 :root {
@@ -12,6 +13,57 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  --animate-shine: shine 5s infinite;
+  --animate-rainbow: rainbow 8s linear infinite;
+  --animate-card-open: card-open 1600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  --animate-loading-bar: loading-bar 1.2s linear infinite;
+
+  @keyframes card-open {
+    0% {
+      transform: scale(0.4) rotateY(0deg);
+    }
+
+    100% {
+      transform: scale(1.8) rotateY(720deg);
+    }
+  }
+
+  @keyframes shine {
+    0% {
+      left: -150%;
+    }
+
+    12% {
+      left: 150%;
+    }
+
+    100% {
+      left: 150%;
+    }
+  }
+
+  @keyframes rainbow {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    100% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes loading-bar {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(320%);
+    }
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -23,4 +75,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.font-title {
+  font-family: "Minguwest";
 }
