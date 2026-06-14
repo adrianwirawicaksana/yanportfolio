@@ -22,7 +22,7 @@ export default function AuthLink_M({
   return (
     <Button
       asChild
-      className={`flex md:hidden h-16 w-16 delay-200 ${
+      className={`flex sm:hidden h-16 w-16 delay-200 ${
         isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5 pointer-events-none"
       }`}
     >

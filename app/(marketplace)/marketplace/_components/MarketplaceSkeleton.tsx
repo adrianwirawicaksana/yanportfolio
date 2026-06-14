@@ -1,4 +1,5 @@
-// components/MarketplaceSkeleton.tsx
+const marketplaceCardWidth = "w-[min(36vw,130px)] sm:w-56 md:w-60 lg:w-64 max-w-64";
+
 export function MarketplaceSkeleton() {
   const dummyItems = Array.from({ length: 10 });
 
@@ -7,7 +8,7 @@ export function MarketplaceSkeleton() {
       {dummyItems.map((_, index) => (
         <div 
           key={index} 
-          className="w-[min(36vw,130px)] sm:w-56 md:w-60 lg:w-64 aspect-16/23 rounded-xl border-2 sm:border-4 border-gray-300 p-4 flex flex-col justify-between overflow-hidden relative bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"
+          className={`${marketplaceCardWidth} aspect-16/23 rounded-xl border-2 sm:border-4 border-gray-300 p-4 flex flex-col justify-between overflow-hidden relative bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer`}
           style={{
             backgroundSize: '200% 100%',
           }}

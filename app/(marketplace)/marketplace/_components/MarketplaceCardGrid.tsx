@@ -5,9 +5,6 @@ import { useCart } from "@/src/context";
 import { useAuth } from "@/src/context";
 import CardImageWithSkeleton from "@/app/_components/CardImageWithSkeleton";
 
-// 🔥 Import hook Auth lu di sini untuk tahu data profile & inventory kartu user
-// Misal: import { useAuth } from "@/src/context"; 
-
 type MarketplaceCardGridProps = {
   card: CardWithPrice;
 };
@@ -20,25 +17,17 @@ const MarketplaceCardGrid = ({ card }: MarketplaceCardGridProps) => {
   const { cartItems, addToCart } = useCart();
   const { user } = useAuth();
   
-  // 🔥 Ambil data user dari hook Auth/Context lu. 
-  // Pastikan isinya membawa field array `owned_cards` yang dikirim dari backend Go kita tadi.
-  // const { user } = useAuth(); 
-  
-  // SEMENTARA BUAT TESTING: Kalau belum dipasang context auth, lu bisa hardcode dulu / mocking data array kosong
   const ownedCards: OwnedCard[] = Array.isArray(user?.owned_cards) ? user.owned_cards : [];
 
   if (!card?.images?.large) return null;
 
   const parsedPrice = Math.trunc(card.marketPrice ?? 0);
 
-  // 1. Cek apakah kartu ini sudah dibeli (ada di inventory user)
   const isAlreadyOwned = ownedCards.some((ownedItem: any) => ownedItem.id === card.id);
 
-  // 2. Cek apakah kartu ini sudah masuk ke keranjang belanja
   const isAlreadyInCart = cartItems.some((item) => item.id === card.id);
 
   const handleAddToCart = () => {
-    // Kalau sudah punya atau sudah di keranjang, kunci fungsinya
     if (isAlreadyOwned || isAlreadyInCart) return;
 
     addToCart({
@@ -49,7 +38,6 @@ const MarketplaceCardGrid = ({ card }: MarketplaceCardGridProps) => {
     });
   };
 
-  // Logika buat nentuin styling button secara dinamis
   const getButtonStyles = () => {
     if (isAlreadyOwned) {
       return "bg-green-500 border-green-700 cursor-not-allowed opacity-90 text-white";
@@ -60,7 +48,6 @@ const MarketplaceCardGrid = ({ card }: MarketplaceCardGridProps) => {
     return "bg-yellow-300 border-orange-300 cursor-pointer hover:scale-105 active:scale-95 text-black";
   };
 
-  // Logika buat nentuin teks di dalam button
   const getButtonText = () => {
     if (isAlreadyOwned) return "✓ Dimiliki";
     if (isAlreadyInCart) return "✓ In Cart";
@@ -69,7 +56,6 @@ const MarketplaceCardGrid = ({ card }: MarketplaceCardGridProps) => {
 
   return (
     <div className="w-[min(36vw,130px)] sm:w-56 md:w-60 lg:w-64 max-w-64 overflow-hidden rounded-xl border-2 border-black bg-slate-200 flex flex-col">
-      {/* AREA GAMBAR */}
       <div className="relative aspect-16/23 w-full overflow-hidden">
         <CardImageWithSkeleton
           src={card.images.large}
@@ -79,9 +65,7 @@ const MarketplaceCardGrid = ({ card }: MarketplaceCardGridProps) => {
         />
       </div>
 
-      {/* BOTTOM BAR */}
       <div className="flex items-center justify-between bg-blue-600 px-2 py-2 border-t-2 border-black">
-        {/* 🔥 DYNAMIC BUTTON: Menangani status Dimiliki, Di Keranjang, dan Tombol Beli */}
         <button
           onClick={handleAddToCart}
           disabled={isAlreadyOwned || isAlreadyInCart}

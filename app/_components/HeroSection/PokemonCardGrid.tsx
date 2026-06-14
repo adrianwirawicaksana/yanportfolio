@@ -2,8 +2,8 @@
 
 import { useLayoutEffect, useState } from "react";
 import type { CardWithPrice } from "@/src/types/pokemon";
-import CardPokemon from "./CardPokemon";
-import { HeroCardSkeleton } from "./CardSkeleton";
+import CardPokemon from "../CardPokemon";
+import { HeroCardSkeleton } from "../CardSkeleton";
 import { processPokemonCards } from "@/src/utils/pokemonUtils";
 import {
   CARD_ROTATIONS,
@@ -27,7 +27,7 @@ const PokemonCardGrid = ({ cards }: Props) => {
 
   useLayoutEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 1024);
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
@@ -73,10 +73,9 @@ const PokemonCardGrid = ({ cards }: Props) => {
                 zIndex: index + 1,
               }}
             >
-              <div className={`${shadowClass} rounded-xl`}>
-                <div className="relative overflow-hidden border-2 border-black rounded-xl">
-                  <HeroCardSkeleton />
-
+              <div className={`${shadowClass} rounded`}>
+                <div className="relative overflow-hidden border-2 border-black rounded">
+                    <HeroCardSkeleton />
                   <div className="pointer-events-none absolute top-0 left-[-150%] h-full w-1/3 rotate-12 bg-white/40 blur-md animate-shine z-30" />
 
                   <div
@@ -155,8 +154,8 @@ const PokemonCardGrid = ({ cards }: Props) => {
               zIndex: isMobile && index === 1 ? 50 : index + 1,
             }}
           >
-            <div className={`${shadowClass} rounded-xl`}>
-              <div className="relative overflow-hidden border-2 border-black rounded-xl">
+            <div className={`${shadowClass} rounded`}>
+              <div className="relative overflow-hidden border-2 border-black rounded">
                 <CardPokemon card={card} priority={index === 0} />
 
                 <div className="pointer-events-none absolute top-0 left-[-150%] h-full w-1/3 rotate-12 bg-white/40 blur-md animate-shine z-30" />

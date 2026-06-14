@@ -16,7 +16,6 @@ export default function ShowCaseCardItem({ children }: Props) {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
-  // Menyimpan rect di ref untuk menghindari Forced Reflow berulang kali
   const rectRef = useRef<DOMRect | null>(null);
 
   const currentX = useRef(0);
@@ -30,7 +29,6 @@ export default function ShowCaseCardItem({ children }: Props) {
 
     if (!isHovered) {
       isAnimatingRef.current = false;
-      // Reset transform ke normal saat mouse leave
       const card = cardRef.current;
       if (card) {
         card.style.transition = "transform 0.4s ease-out";
@@ -41,7 +39,6 @@ export default function ShowCaseCardItem({ children }: Props) {
           translateZ(0px)
           scale(1)
         `;
-        // Reset currentX dan currentY untuk persiapan hover berikutnya
         currentX.current = 0;
         currentY.current = 0;
       }
@@ -84,12 +81,10 @@ export default function ShowCaseCardItem({ children }: Props) {
     };
   }, [isHovered]);
 
-  // Ambil data posisi koordinat HANYA saat mouse pertama kali masuk kotak kartu
   const handleMouseEnter = () => {
     setIsHovered(true);
     if (cardRef.current) {
       rectRef.current = cardRef.current.getBoundingClientRect();
-      // Hapus transition saat hover dimulai agar animasi smooth saat bergerak
       cardRef.current.style.transition = "none";
     }
   };
@@ -115,7 +110,6 @@ export default function ShowCaseCardItem({ children }: Props) {
 
     if (!card || !rect) return;
 
-    // Menggunakan data rect yang sudah di-cache di dalam ref (Bebas Forced Reflow!)
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
@@ -143,7 +137,6 @@ export default function ShowCaseCardItem({ children }: Props) {
     }
   };
 
-  // Navigasi keyboard (Aksesibilitas) agar bisa di-klik pakai Enter
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -156,11 +149,11 @@ export default function ShowCaseCardItem({ children }: Props) {
       <div
         ref={cardRef}
         onClick={() => setIsOpen(true)}
-        onMouseEnter={handleMouseEnter} // Ditambahkan untuk hitung awal koordinat
+        onMouseEnter={handleMouseEnter} 
         onMouseMove={handleMove}
         onMouseLeave={handleMouseLeave}
         onKeyDown={handleKeyDown}
-        tabIndex={0} // Membuat elemen bisa di-focus dengan tombol TAB keyboard
+        tabIndex={0} 
         role="button"
         aria-label="View card details"
         aria-haspopup="dialog"
@@ -169,13 +162,10 @@ export default function ShowCaseCardItem({ children }: Props) {
       >
         {children}
 
-        {/* Glow mengikuti mouse */}
         <div className="card-glow pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 z-20" />
 
-        {/* Holographic rainbow */}
         <div className="pointer-events-none absolute inset-0 z-10 opacity-20 mix-blend-overlay bg-[linear-gradient(120deg,#ff00ff,#00ffff,#ffff00,#ff00ff)] bg-size[300%_300%] animate-rainbow" />
 
-        {/* Shine otomatis */}
         <div className="pointer-events-none absolute top-0 left-[-150%] h-full w-1/3 rotate-12 bg-white/50 blur-md animate-shine z-30" />
       </div>
 
@@ -186,7 +176,6 @@ export default function ShowCaseCardItem({ children }: Props) {
           aria-modal="true"
           className="fixed inset-0 z-999 flex items-center justify-center bg-black/70 backdrop-blur-md animate-fade-in"
         >
-          {/* Tombol Close untuk Aksesibilitas Pembaca Layar */}
           <button 
             onClick={() => setIsOpen(false)} 
             className="absolute top-4 right-4 text-white text-xl font-bold bg-black/40 p-2 rounded-full z-1000 md:block hidden"

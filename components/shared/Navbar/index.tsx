@@ -72,14 +72,22 @@ export default function Navbar() {
             />
           </div>
 
-          <CoinButton_D isLoading={isLoading} coins={coins} onOpenTopUp={() => setIsTopUpOpen(true)} />
-
           <div className="hidden md:flex">
             <MarketplaceButton_D isMarketplacePage={isMarketplacePage} />
           </div>
 
-          <div className="hidden md:flex">
-            <AuthLink_D isLoading={isLoading} isDashboardPage={isDashboardPage} isLoggedIn={isLoggedIn} />
+          <CoinButton_D
+            isLoading={isLoading}
+            coins={coins}
+            onOpenTopUp={() => setIsTopUpOpen(true)}
+          />
+
+          <div className="hidden sm:flex">
+            <AuthLink_D
+              isLoading={isLoading}
+              isDashboardPage={isDashboardPage}
+              isLoggedIn={isLoggedIn}
+            />
           </div>
         </div>
       </nav>
@@ -103,7 +111,10 @@ export default function Navbar() {
           totalItems={totalItems}
         />
 
-        <MarketplaceButton_M isMenuOpen={isMenuOpen} isMarketplacePage={isMarketplacePage} />
+        <MarketplaceButton_M
+          isMenuOpen={isMenuOpen}
+          isMarketplacePage={isMarketplacePage}
+        />
 
         <AuthLink_M
           isLoading={isLoading}
