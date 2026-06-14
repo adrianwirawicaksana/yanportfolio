@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, ReactNode } from "react";
 import { Slot } from "@radix-ui/react-slot";
 
 const BASE_BUTTON_STYLES = `
-  inline-flex items-center justify-center 
+  relative inline-flex items-center justify-center 
   font-bold text-white rounded-xl
   border-3 border-blue-600 bg-linear-to-t from-blue-600 to-blue-500 
   hover:scale-102 active:scale-98 transition-all duration-300 
