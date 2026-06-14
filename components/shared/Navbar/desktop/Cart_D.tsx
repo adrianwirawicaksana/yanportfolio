@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Button from "@/components/ui/Button"; 
@@ -35,13 +34,11 @@ export default function Cart({
   cartItems,
   removeFromCart,
   totalPrice,
-  clearCart,
   isLoading,
   userCoins,
   isCoinEnough,
   isCheckingOut,
   handleCheckout,
-  isMarketplacePage,
 }: CartProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -53,7 +50,6 @@ export default function Cart({
   return (
     <>
       <div ref={cartRef} className="relative hidden lg:block z-80">
-        {/* 1. Trigger Dropdown (Murni Button Aksi) */}
         <Button 
           onClick={() => setIsCartDropdownOpen(!isCartDropdownOpen)} 
           className="relative flex gap-2 items-center justify-center p-2 px-4 h-16 min-w-25 border-6 md:shadow-[8px_8px_0_0_#000] hover:shadow-[0px_0px_0_0_#000] hover:scale-105 active:scale-95 ease-in-out"
@@ -212,19 +208,6 @@ export default function Cart({
           </div>
         </>,
         document.body as Element
-      )}
-
-      {!isMarketplacePage && (
-        <Button 
-          asChild
-          className="hidden md:flex gap-2 text-xl sm:text-3xl border-3 sm:border-6 h-16 min-w-25 md:shadow-[8px_8px_0_0_#000] hover:shadow-[0px_0px_0_0_#000] hover:scale-105 ease-in-out z-80"
-        >
-          <Link href="/marketplace">
-            <div className="relative h-10 w-10 rounded-full">
-              <Image src="/Market.svg" alt="Marketplace" fill sizes="40px" className="absolute object-cover" />
-            </div>
-          </Link>
-        </Button>
       )}
     </>
   );

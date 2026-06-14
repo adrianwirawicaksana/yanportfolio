@@ -9,6 +9,7 @@ import Logo_D from "./desktop/Logo_D";
 import Cart_D from "./desktop/Cart_D";
 import CoinButton_D from "./desktop/CoinButton_D";
 import AuthLink_D from "./desktop/AuthLink_D";
+import MarketplaceButton_D from "./desktop/MarketplaceButton_D";
 import TopUpModal from "@/components/ui/TopUpModal";
 import MenuToggle_M from "./mobile/MenuToggle_M";
 import CartButton_M from "./mobile/CartButton_M";
@@ -50,26 +51,36 @@ export default function Navbar() {
       <nav className="fixed flex items-center justify-between backdrop-blur-md gap-2 top-0 h-22 md:h-24 w-screen px-4 md:px-8 z-70">
         <Logo_D />
         <div className="flex gap-4 items-center">
-          <Cart_D
-            cartRef={cartRef}
-            isCartDropdownOpen={isCartDropdownOpen}
-            setIsCartDropdownOpen={setIsCartDropdownOpen}
-            isMobileCartOpen={isMobileCartOpen}
-            setIsMobileCartOpen={setIsMobileCartOpen}
-            totalItems={totalItems}
-            cartItems={cartItems}
-            removeFromCart={removeFromCart}
-            totalPrice={totalPrice}
-            clearCart={clearCart}
-            isLoading={isLoading}
-            userCoins={userCoins}
-            isCoinEnough={isCoinEnough}
-            isCheckingOut={isCheckingOut}
-            handleCheckout={handleCheckout}
-            isMarketplacePage={isMarketplacePage}
-          />
+          <div className="hidden md:flex">
+            <Cart_D
+              cartRef={cartRef}
+              isCartDropdownOpen={isCartDropdownOpen}
+              setIsCartDropdownOpen={setIsCartDropdownOpen}
+              isMobileCartOpen={isMobileCartOpen}
+              setIsMobileCartOpen={setIsMobileCartOpen}
+              totalItems={totalItems}
+              cartItems={cartItems}
+              removeFromCart={removeFromCart}
+              totalPrice={totalPrice}
+              clearCart={clearCart}
+              isLoading={isLoading}
+              userCoins={userCoins}
+              isCoinEnough={isCoinEnough}
+              isCheckingOut={isCheckingOut}
+              handleCheckout={handleCheckout}
+              isMarketplacePage={isMarketplacePage}
+            />
+          </div>
+
           <CoinButton_D isLoading={isLoading} coins={coins} onOpenTopUp={() => setIsTopUpOpen(true)} />
-          <AuthLink_D isLoading={isLoading} isDashboardPage={isDashboardPage} isLoggedIn={isLoggedIn} />
+
+          <div className="hidden md:flex">
+            <MarketplaceButton_D isMarketplacePage={isMarketplacePage} />
+          </div>
+
+          <div className="hidden md:flex">
+            <AuthLink_D isLoading={isLoading} isDashboardPage={isDashboardPage} isLoggedIn={isLoggedIn} />
+          </div>
         </div>
       </nav>
 
