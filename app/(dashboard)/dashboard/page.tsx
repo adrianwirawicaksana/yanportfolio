@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context";
 import { authService } from "@/src/services";
-import CardImageWithSkeleton from "@/app/_components/CardImageWithSkeleton";
+import CardImageWithSkeleton from "@/app/(marketplace)/marketplace/_components/CardImageWithSkeleton";
 import { DashboardCardsSkeleton } from "./_components/DashboardCardsSkeleton";
 
 interface CardItem {

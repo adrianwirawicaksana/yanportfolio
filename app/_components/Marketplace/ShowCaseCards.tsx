@@ -14,7 +14,7 @@ const ShowCaseCards = ({ cards }: Props) => {
     <section className="min-h-screen w-full py-6" aria-label="Showcase Pokemon Cards">
       <div className="mx-auto flex w-full flex-col gap-8">
 
-        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-12 px-2 sm:px-4 md:px-6">
+        <div className="flex flex-wrap justify-center gap-8 px-2 sm:px-4 md:px-6">
           {cards.slice(0, 10).map((card, index) => (
             <ShowCaseCardItem key={card.id}>
               {/* PENTING: Pastikan di dalam CardPokemon ini Anda me-render `card.images.small`, BUKAN `large`! */}

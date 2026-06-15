@@ -108,3 +108,37 @@ export function CardImageSkeleton({ className = "" }: CardSkeletonProps) {
     />
   );
 }
+
+export function MarketplaceCardSkeleton({ className = "" }: CardSkeletonProps) {
+  return (
+    <div className={`w-60 xl:w-64 overflow-hidden rounded border-2 border-black bg-slate-200 flex flex-col ${className}`}>
+      
+      <div 
+        className="relative aspect-16/23 w-full p-3 flex flex-col justify-between bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 animate-shimmer"
+        style={{ backgroundSize: "200% 100%" }}
+      >
+        <div className="flex justify-between items-center w-full">
+          <div className="h-3 sm:h-4 bg-gray-300 rounded w-1/2 opacity-70" />
+          <div className="h-3 sm:h-4 bg-gray-300 rounded w-10 opacity-70" />
+        </div>
+
+        <div className="w-full aspect-4/3 border-2 border-dashed border-gray-300 rounded-sm bg-gray-100/50 opacity-60 flex items-center justify-center">
+          <div className="w-6 h-6 rounded-full bg-gray-300 opacity-40" />
+        </div>
+
+        <div className="w-full flex flex-col gap-1.5 mt-2">
+          <div className="w-full h-1 bg-gray-300 opacity-50 mb-1" />
+          
+          <div className="h-2.5 sm:h-3 bg-gray-300 rounded w-3/4 opacity-60" />
+          <div className="h-2.5 sm:h-3 bg-gray-300 rounded w-1/2 opacity-60" />
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center bg-blue-600 px-2 py-2 border-t-2 border-black">
+        <div className="h-7 sm:h-8 bg-gray-300 rounded w-20 sm:w-24 opacity-70" />
+        <div className="h-5 sm:h-6 bg-gray-300 rounded w-14 sm:w-16 opacity-70" />
+      </div>
+
+    </div>
+  );
+}

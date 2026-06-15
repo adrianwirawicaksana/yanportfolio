@@ -148,6 +148,16 @@ const Footer = () => {
                   Accessibility
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="https://yan-portfolio.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-yellow-300 transition-colors"
+                >
+                  About Developer
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

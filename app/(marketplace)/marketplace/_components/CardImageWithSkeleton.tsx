@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { CardImageSkeleton } from "./CardSkeleton";
+import { CardImageSkeleton } from "../../../_components/CardSkeleton";
 
 type CardImageWithSkeletonProps = {
   src: string;
@@ -10,6 +10,8 @@ type CardImageWithSkeletonProps = {
   sizes?: string;
   className?: string;
   wrapperClassName?: string;
+  priority?: boolean;
+  showFullSkeleton?: boolean;
 };
 
 export default function CardImageWithSkeleton({
@@ -18,6 +20,8 @@ export default function CardImageWithSkeleton({
   sizes,
   className = "",
   wrapperClassName = "",
+  priority = false,
+  showFullSkeleton = false,
 }: CardImageWithSkeletonProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -25,12 +29,13 @@ export default function CardImageWithSkeleton({
 
   return (
     <div className={`relative overflow-hidden h-full w-full ${wrapperClassName}`}>
-      {showSkeleton && <CardImageSkeleton className="absolute inset-0 z-10" />}
+      {showSkeleton && !showFullSkeleton && <CardImageSkeleton className="absolute inset-0 z-10" />}
 
       <Image
         src={src}
         alt={alt}
         fill
+        priority={priority}
         sizes={sizes}
         className={`object-contain transition-opacity duration-500 ${
           isLoaded && !isError ? "opacity-100" : "opacity-0"
