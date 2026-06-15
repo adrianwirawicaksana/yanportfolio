@@ -44,7 +44,7 @@ const CardPokemon = ({ card, priority = false }: Props) => {
         }`}
         quality={85}
         loading={priority ? "eager" : "lazy"}
-        priority={priority}
+        priority={true}
         placeholder="empty"
         onLoad={() => setIsLoaded(true)}
         onError={() => setIsError(true)}

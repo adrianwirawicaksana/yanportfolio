@@ -30,23 +30,22 @@ const SourceHeader = () => {
             <Image
               src={items.logo}
               alt={items.name}
-              width={56}
-              height={56}
               priority={index < 5}
-              style={{ width: "auto", height: "auto" }}
+              fill
+              sizes="56px"
               className="object-contain rounded relative z-10"
-              onLoadingComplete={() => handleLoaded(index)}
+              onLoad={() => handleLoaded(index)} 
             />
           </div>
 
           <div className="min-w-0">
-            <p className="text-sm text-gray-500 truncate">{items.subject}</p>
+            <p className="text-sm text-slate-600 font-medium truncate">{items.subject}</p>
             <h2 className="font-bold text-base truncate text-black">{items.name}</h2>
           </div>
         </div>
       ))}
     </div>
   );
-};
+}
 
 export default SourceHeader;

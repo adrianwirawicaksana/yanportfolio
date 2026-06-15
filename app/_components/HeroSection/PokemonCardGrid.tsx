@@ -70,10 +70,10 @@ const PokemonCardGrid = ({ cards }: Props) => {
               style={{
                 transform: ` translateY(${yOffsetsPlaceholder[index]}px) rotate(${rotationsPlaceholder[index]}deg) scale(${scalesPlaceholder[index]}) `,
                 marginLeft: index === 0 ? 0 : marginOffsetPlaceholder,
-                zIndex: index + 1,
+               zIndex: index === 1 ? 10 : index + 1,
               }}
             >
-              <div className={`${shadowClass} rounded`}>
+              <div className={`${shadowClass} rounded-xl`}>
                 <div className="relative overflow-hidden border-2 border-black rounded">
                     <HeroCardSkeleton />
                   <div className="pointer-events-none absolute top-0 left-[-150%] h-full w-1/3 rotate-12 bg-white/40 blur-md animate-shine z-30" />

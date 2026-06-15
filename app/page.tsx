@@ -23,13 +23,16 @@ const PokemonGridWrapper = dynamic(
 );
 
 const MarketPlace = dynamic(() => import("./_components/Marketplace"), {
-  ssr: true, 
+  ssr: true,
 });
 
-const ShowCaseWrapper = dynamic(() => import("./_components/Marketplace/ShowcaseWrapper"), {
-  ssr: true,
-  loading: () => <CardSkeleton />,
-});
+const ShowCaseWrapper = dynamic(
+  () => import("./_components/Marketplace/ShowcaseWrapper"),
+  {
+    ssr: true,
+    loading: () => <CardSkeleton />,
+  },
+);
 
 export default function Home() {
   return (

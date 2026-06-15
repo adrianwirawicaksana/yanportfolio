@@ -5,7 +5,6 @@ import { useState } from "react";
 import { paymentService } from "@/src/services";
 import { useAuth } from "@/src/context";
 
-// 👇 TAMBAHKAN DEKLARASI INI BRE
 declare global {
   interface Window {
     snap: {
@@ -20,7 +19,6 @@ const COIN_PACKAGES = [
   { id: "pkg-500", name: "500x Booster Coins", price: 210000, coins: 500, desc: "Paket Master, bonus kuota harian" },
 ];
 
-// 1. Buat contract interface untuk properti komponen kamu
 interface TopUpModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -49,7 +47,6 @@ const TopUpModal = ({ isOpen, onClose }: TopUpModalProps) => {
 
       const token = response.data.token;
 
-      // Panggil pop-up Midtrans Snap bawaan window
       if (!window.snap?.pay) {
         toast.error("Midtrans Snap belum siap. Silakan muat ulang halaman dan coba lagi.");
         return;
@@ -82,10 +79,8 @@ const TopUpModal = ({ isOpen, onClose }: TopUpModalProps) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-100 p-4">
-      {/* Container Modal (Gaya Komik) */}
       <div className="bg-white border-4 border-black w-full max-w-md rounded-2xl p-6 shadow-[10px_10px_0px_0px_#000] relative animate-in fade-in zoom-in-95 duration-200">
         
-        {/* Tombol Close Pojok Kanan Atas */}
         <button 
           onClick={onClose}
           className="absolute -top-3 -right-3 h-10 w-10 bg-red-500 text-white font-black border-3 border-black rounded-lg hover:bg-red-600 hover:scale-105 active:scale-95 duration-200 shadow-[2px_2px_0px_0px_#000]"
@@ -93,12 +88,10 @@ const TopUpModal = ({ isOpen, onClose }: TopUpModalProps) => {
           ✕
         </button>
 
-        {/* Header Modal */}
         <h2 className="text-2xl font-title text-white font-black mb-6 text-center uppercase tracking-widest bg-linear-to-t from-blue-600 to-blue-500 rounded py-2 border-3 border-blue-600 shadow-[4px_4px_0px_0px_#000]">
           Top Up Coins
         </h2>
 
-        {/* List Pilihan Paket */}
         <div className="flex flex-col gap-3 max-h-72 overflow-y-auto pr-1">
           {COIN_PACKAGES.map((pkg) => (
             <label 
@@ -125,7 +118,6 @@ const TopUpModal = ({ isOpen, onClose }: TopUpModalProps) => {
           ))}
         </div>
 
-        {/* Tombol Bayar */}
         <div className="mt-6">
           <button
             type="button"

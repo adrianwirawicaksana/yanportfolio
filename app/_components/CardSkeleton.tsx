@@ -1,7 +1,7 @@
 "use client";
 
 const heroCardWidthClasses = "min-w-33 sm:min-w-46 md:min-w-50 lg:min-w-55 xl:min-w-64 max-w-64";
-const genericCardWidthClasses = "w-[min(36vw,130px)] sm:w-56 md:w-60 lg:w-64 max-w-64";
+const genericCardWidthClasses = "w-56 md:w-60 lg:w-64 max-w-64";
 const cardWidthClasses = genericCardWidthClasses;
 
 type CardSkeletonProps = {
