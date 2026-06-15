@@ -1,5 +1,6 @@
 "use client";
 
+import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 import Navbar from "@/components/shared/Navbar";
@@ -14,7 +15,6 @@ export default function RootLayoutClient({
 }) {
   const pathname = usePathname();
 
-  // Memeriksa apakah URL mengandung kata 'login', 'register', atau diawali '/auth'
   const isAuthPage =
     pathname === "/login" ||
     pathname === "/register" ||
@@ -23,15 +23,18 @@ export default function RootLayoutClient({
   return (
     <AuthProvider>
       <CartProvider>
-        {/* Jika BUKAN halaman auth, munculkan Navbar */}
+        <Script
+          src="https://app.sandbox.midtrans.com/snap/snap.js"
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          strategy="afterInteractive"
+        />
+
         {!isAuthPage && <Navbar />}
 
         <main className="grow">{children}</main>
 
-        {/* Toast notif global */}
         <Toaster position="top-right" />
 
-        {/* Jika BUKAN halaman auth, munculkan Footer */}
         {!isAuthPage && <Footer />}
       </CartProvider>
     </AuthProvider>
