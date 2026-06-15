@@ -1,6 +1,14 @@
-![PokemonTCG Dashboard & Marketplace](public/Thumbnail.png)
+<p align="center">
+  <img src="public/Thumbnail.png" alt="PokemonTCG Dashboard & Marketplace" />
+</p>
 
-# PokemonTCG Dashboard & Marketplace
+<h1 align="center" style="font-family: 'Pokemon', 'Arial', sans-serif; font-size: 3rem;">
+  PokémonTCG Dashboard & Marketplace
+</h1>
+
+<p align="center">
+  [![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org) [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev) [![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev) [![Gin](https://img.shields.io/badge/Gin-000000?style=for-the-badge&logo=gin&logoColor=white)](https://gin-gonic.com) [![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com)
+</p>
 
 A full-stack Pokemon trading card application built with Next.js for the frontend and Go/Gin for the backend. Aplikasi ini mendukung registrasi, verifikasi OTP email, login manual dan Google OAuth, serta fitur dashboard koleksi kartu dengan pembelian menggunakan koin.
 
