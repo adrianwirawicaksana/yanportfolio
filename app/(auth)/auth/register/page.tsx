@@ -14,55 +14,75 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // State untuk manajemen show/hide password
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
+  const BACKEND_URL = (typeof window !== 'undefined' ? window.__BACKEND_URL__ || null : null) || process.env.NEXT_PUBLIC_BACKEND_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000') || "http://localhost:8080";
 
-  // JALUR 1: Registrasi Manual (Form)
   const handleManualRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!name.trim()) {
+      return toast.error("Nama tidak boleh kosong. Silakan isi nama Anda.");
+    }
+
+    if (!email.trim()) {
+      return toast.error("Email tidak boleh kosong. Silakan isi email Anda.");
+    }
+
+    if (password.length < 6) {
+      return toast.error("Password minimal 6 karakter. Gunakan kombinasi huruf dan angka.");
+    }
+
     if (password !== confirmPassword) {
-      return toast.error("Password dan Konfirmasi Password tidak cocok! ❌");
+      return toast.error("Password dan konfirmasi password tidak cocok. Silakan periksa kembali.");
     }
 
     setLoading(true);
 
     try {
-      const response = await authService.register({ name, email, password });
+      const payload = { 
+        name: name.trim(), 
+        email: email.trim().toLowerCase(), 
+        password 
+      };
+      
+      console.log("Register payload:", payload);
+      
+      const response = await authService.register(payload);
 
       if (response.error) {
-        return toast.error(response.error);
+        console.error("Register error:", response);
+        const errorMsg = response.error || "Pendaftaran gagal. Mohon coba lagi.";
+        return toast.error(errorMsg);
+      }
+
+      if (!response.data) {
+        return toast.error("Terjadi kesalahan. Silakan coba lagi beberapa saat lagi.");
       }
 
       toast.success("Registrasi Berhasil! 🎉 Silahkan cek email Anda untuk kode OTP.");
       window.location.href = `/auth/verify-otp?email=${encodeURIComponent(email)}`;
     } catch (err) {
-      console.error(err);
-      toast.error("Terjadi kesalahan, silahkan coba lagi.");
+      console.error("Register catch error:", err);
+      const errorMessage = err instanceof Error ? err.message : "Oops! Ada masalah. Coba lagi dalam beberapa saat.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  // JALUR 2: OAuth (Google / Gmail Otomatis)
   const handleGoogleRegister = () => {
-    window.location.href = `${BACKEND_URL}/api/auth/google`;
+    const target = `${BACKEND_URL.replace(/\/$/, '')}/api/auth/google`;
+    window.location.href = target;
   };
 
   return (
-    /* - grid-cols-1: Di HP/Mobile menumpuk penuh 1 kolom ke bawah.
-       - md:grid-cols-6: Mulai dari ukuran tablet ke atas, layar dibagi jadi 6 kolom virtual.
-    */
     <div className="min-h-screen w-full grid grid-cols-1 md:grid-cols-6 bg-yellow-300">
       
-      {/* KONTAINER KIRI: Form Register */}
       <div className="w-full min-h-screen bg-white flex justify-center items-center p-8 md:col-span-3 lg:col-span-2 md:border-r-2 md:border-gray-300">
         <div className="w-full max-w-md transform transition-all">
           
-          {/* Header */}
           <div className="text-center mb-6">
             <h1 className="text-3xl font-extrabold text-gray-800 tracking-tight font-title">
               Buat Akun
@@ -72,7 +92,6 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          {/* Form Registrasi Manual */}
           <form onSubmit={handleManualRegister} className="space-y-4">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -104,7 +123,6 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Input Password */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">
                 Password
@@ -119,7 +137,6 @@ export default function RegisterPage() {
                   required
                   disabled={loading}
                 />
-                {/* Tombol Mata */}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -131,7 +148,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Input Konfirmasi Password */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">
                 Konfirmasi Password
@@ -146,7 +162,6 @@ export default function RegisterPage() {
                   required
                   disabled={loading}
                 />
-                {/* Tombol Mata */}
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -167,7 +182,6 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          {/* Divider / Separator */}
           <div className="relative flex py-4 items-center">
             <div className="grow border-t border-gray-200"></div>
             <span className="shrink mx-4 text-gray-400 text-xs font-medium uppercase tracking-wider">
@@ -176,7 +190,6 @@ export default function RegisterPage() {
             <div className="grow border-t border-gray-200"></div>
           </div>
 
-          {/* Tombol Google */}
           <button
             type="button"
             onClick={handleGoogleRegister}
@@ -187,7 +200,6 @@ export default function RegisterPage() {
             <span>Sign in with Google</span>
           </button>
 
-          {/* Link Kembali ke Halaman Login */}
           <div className="text-center mt-6 text-sm">
             <p className="text-gray-500">
               Sudah punya akun?{" "}
@@ -203,7 +215,6 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* KONTAINER KANAN: Tempat Banner / Gambar */}
       <div className="hidden md:flex min-h-screen relative overflow-hidden md:col-span-3 lg:col-span-4">
         <Image
           src="/Pokemon.svg"

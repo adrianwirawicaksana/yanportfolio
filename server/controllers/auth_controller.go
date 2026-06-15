@@ -96,7 +96,7 @@ func Register(c *gin.Context) {
 
 		hashedPassword, err := models.HashPassword(input.Password)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal enkripsi password"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memproses password. Coba lagi?"})
 			return
 		}
 
@@ -113,14 +113,14 @@ func Register(c *gin.Context) {
 
 		_, err = collection.UpdateOne(ctx, bson.M{"email": input.Email}, update)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memperbarui kode OTP"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengirim OTP baru. Coba lagi?"})
 			return
 		}
 
 		err = sendEmailOTP(input.Email, newOTP)
 		if err != nil {
 			fmt.Println("Gagal kirim email ulang:", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengirimkan kode OTP baru ke email"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengirim kode OTP. Coba lagi?"})
 			return
 		}
 
@@ -133,7 +133,7 @@ func Register(c *gin.Context) {
 
 	hashedPassword, err := models.HashPassword(input.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal enkripsi password"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memproses password. Coba lagi?"})
 		return
 	}
 	input.Password = hashedPassword
@@ -144,14 +144,14 @@ func Register(c *gin.Context) {
 
 	_, err = collection.InsertOne(ctx, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal membuat akun. Coba lagi?"})
 		return
 	}
 
 	err = sendEmailOTP(input.Email, input.OTPCode)
 	if err != nil {
 		fmt.Println("Gagal kirim email:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Akun berhasil dibuat, namun gagal mengirimkan email OTP"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Akun berhasil dibuat. Email OTP sedang dikirim ke inbox Anda."})
 		return
 	}
 
@@ -164,7 +164,7 @@ func Register(c *gin.Context) {
 func VerifyOTP(c *gin.Context) {
 	var req VerifyOTPRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Format data OTP tidak valid"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Format data tidak valid. Coba lagi?"})
 		return
 	}
 
@@ -175,7 +175,7 @@ func VerifyOTP(c *gin.Context) {
 	var dbUser models.User
 	err := collection.FindOne(ctx, bson.M{"email": req.Email}).Decode(&dbUser)
 	if err == mongo.ErrNoDocuments {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User tidak ditemukan"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "Akun tidak ditemukan. Silakan periksa email Anda."})
 		return
 	}
 
@@ -201,7 +201,7 @@ func VerifyOTP(c *gin.Context) {
 
 	_, err = collection.UpdateOne(ctx, bson.M{"email": req.Email}, update)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memverifikasi akun"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Tidak bisa memverifikasi akun. Coba lagi?"})
 		return
 	}
 
@@ -247,9 +247,17 @@ func Login(c *gin.Context) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(getJWTSecret())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal membuat session token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ada masalah saat membuat session. Coba login lagi?"})
 		return
 	}
 
+	secure := os.Getenv("NODE_ENV") == "production"
+	c.SetCookie("token", tokenString, 24*60*60, "/", "", secure, true)
 	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+}
+
+func Logout(c *gin.Context) {
+	secure := os.Getenv("NODE_ENV") == "production"
+	c.SetCookie("token", "", -1, "/", "", secure, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Logout sukses"})
 }

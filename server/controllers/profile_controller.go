@@ -23,7 +23,7 @@ type UserProfile struct {
 func UpdateProfileHandler(c *gin.Context) {
 	userEmail, exists := c.Get("email")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User tidak terautentikasi, silakan login ulang"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Sesi Anda telah berakhir. Silakan login ulang."})
 		return
 	}
 
@@ -47,14 +47,14 @@ func UpdateProfileHandler(c *gin.Context) {
 
 		openedFile, err := file.Open()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal membaca file avatar"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Tidak bisa membaca file avatar. Coba lagi?"})
 			return
 		}
 		defer openedFile.Close()
 
 		fileBytes, err := io.ReadAll(openedFile)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memproses file avatar"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ada masalah saat memproses avatar. Coba lagi?"})
 			return
 		}
 
@@ -93,12 +93,12 @@ func UpdateProfileHandler(c *gin.Context) {
 
 	_, errDb := collection.UpdateOne(ctx, filter, update)
 	if errDb != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memperbarui data di MongoDB"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Tidak bisa menyimpan perubahan. Coba lagi?"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Profil berhasil di-update ke MongoDB!",
+		"message": "Profil berhasil diperbarui!",
 		"data": UserProfile{
 			Name:      name,
 			Email:     email,

@@ -15,11 +15,16 @@ function AuthSuccessHandler() {
     const token = searchParams.get('token');
 
     if (token) {
+      // Token is set as a secure httpOnly cookie by backend
+      // Also store in localStorage for client-side access
       localStorage.setItem('token', token);
+      // Store in regular cookie for middleware
+      document.cookie = `token=${token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
+      // Refresh profile and redirect to dashboard
       refreshProfile().finally(() => router.push('/dashboard'));
     } else {
-      toast.error('Token tidak ditemukan, autentikasi gagal.');
-      router.push('/login');
+      toast.error('Login gagal. Silakan coba kembali.');
+      router.push('/auth/login');
     }
   }, [searchParams, router, refreshProfile]);
 

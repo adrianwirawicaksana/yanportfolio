@@ -17,13 +17,13 @@ func GetUserProfile(c *gin.Context) {
 
 	emailInterface, exists := c.Get("email")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized, token tidak valid atau kedaluwarsa"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Sesi Anda telah berakhir. Silakan login ulang."})
 		return
 	}
 
 	email, ok := emailInterface.(string)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Format email di dalam token tidak valid"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ada masalah dengan data akun Anda. Silakan login ulang."})
 		return
 	}
 
@@ -36,7 +36,7 @@ func GetUserProfile(c *gin.Context) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User tidak ditemukan"})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data profile dari database"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Tidak bisa mengambil data profile. Coba lagi?"})
 		return
 	}
 

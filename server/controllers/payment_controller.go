@@ -44,7 +44,7 @@ type MidtransNotification struct {
 func MidtransWebhook(c *gin.Context) {
 	var notification MidtransNotification
 	if err := c.ShouldBindJSON(&notification); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid payload"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Data yang dikirim tidak valid."})
 		return
 	}
 

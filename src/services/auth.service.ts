@@ -46,6 +46,20 @@ export const authService = {
     localStorage.removeItem("token");
   },
 
+  clearUserCache(): void {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem("auth_user");
+  },
+
+  clearAllCache(): void {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem("token");
+    localStorage.removeItem("auth_user");
+    localStorage.removeItem("pokemon_cart");
+    // Also clear token from cookie
+    document.cookie = "token=; path=/; max-age=0; SameSite=Lax";
+  },
+
   isLoggedIn(): boolean {
     return !!this.getStoredToken();
   },

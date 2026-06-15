@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { dashboardService } from "@/src/services";
 import type { UserProfile } from "@/src/types";
 
@@ -8,6 +8,7 @@ interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
   refreshProfile: () => Promise<void>;
+  clearUser: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [mounted, setMounted] = useState<boolean>(false);
 
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (!token) {
       setUser(null);
@@ -67,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     // Only run on client-side after hydration
@@ -79,10 +80,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       refreshProfile();
     }
-  }, []);
+  }, [refreshProfile]);
+
+  const clearUser = () => {
+    setUser(null);
+    cacheUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading, refreshProfile }}>
+    <AuthContext.Provider value={{ user, loading, refreshProfile, clearUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -27,7 +28,7 @@ func GoogleLogin(c *gin.Context) {
 func GoogleCallback(c *gin.Context) {
 	state := c.Query("state")
 	if state != "random_state_string" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "State tidak valid"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Login gagal. Silakan coba lagi dari awal."})
 		return
 	}
 
@@ -37,13 +38,13 @@ func GoogleCallback(c *gin.Context) {
 
 	token, err := config.GoogleOauthConfig.Exchange(ctx, code)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menukar code dengan token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Login dengan Google tidak berhasil. Coba lagi?"})
 		return
 	}
 
 	resp, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + token.AccessToken)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data user dari Google"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Tidak bisa mengambil data profile. Coba lagi?"})
 		return
 	}
 	defer resp.Body.Close()
@@ -57,7 +58,7 @@ func GoogleCallback(c *gin.Context) {
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&googleUser); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal membaca data profil"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ada masalah saat login. Coba lagi?"})
 		return
 	}
 
@@ -82,17 +83,17 @@ func GoogleCallback(c *gin.Context) {
 
 		_, insertErr := collection.InsertOne(dbCtx, newUser)
 		if insertErr != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan user baru ke database"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal membuat akun baru. Coba lagi?"})
 			return
 		}
 	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memverifikasi data di database"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Ada masalah saat login. Coba lagi?"})
 		return
 	} else {
 		update := bson.M{"$set": bson.M{"last_login_at": time.Now()}}
 		_, updateErr := collection.UpdateOne(dbCtx, filter, update)
 		if updateErr != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memperbarui data login terakhir"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Ada masalah teknis. Silakan login kembali."})
 			return
 		}
 	}
@@ -107,10 +108,21 @@ func GoogleCallback(c *gin.Context) {
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := jwtToken.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal membuat session token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Session tidak bisa dibuat. Coba lagi."})
 		return
 	}
 
-	targetURL := "https://yanportfolio.vercel.app/auth/success?token=" + tokenString
+	secure := os.Getenv("NODE_ENV") == "production"
+	c.SetCookie("token", tokenString, 24*60*60, "/", "", secure, true)
+
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL == "" {
+		// FRONTEND_URL must ALWAYS be set — no hardcoded fallbacks
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Konfigurasi belum lengkap. Hubungi admin."})
+		return
+	}
+
+	// Redirect to /auth/success with token in query param for frontend to handle
+	targetURL := fmt.Sprintf("%s/auth/success?token=%s", frontendURL, tokenString)
 	c.Redirect(http.StatusTemporaryRedirect, targetURL)
 }

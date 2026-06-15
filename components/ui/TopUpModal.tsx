@@ -42,13 +42,13 @@ const TopUpModal = ({ isOpen, onClose }: TopUpModalProps) => {
       });
 
       if (response.error || !response.data?.token) {
-        return toast.error(response.error || "Gagal mendapatkan token pembayaran.");
+        return toast.error(response.error || "Tidak bisa memproses pembayaran. Coba lagi.");
       }
 
       const token = response.data.token;
 
       if (!window.snap?.pay) {
-        toast.error("Midtrans Snap belum siap. Silakan muat ulang halaman dan coba lagi.");
+        toast.error("Jendela pembayaran sedang dimuat. Tunggu sebentar...");
         return;
       }
 
@@ -62,7 +62,7 @@ const TopUpModal = ({ isOpen, onClose }: TopUpModalProps) => {
           toast.loading("Menunggu pembayaran Anda.");
         },
         onError: function () {
-          toast.error("Pembayaran gagal, silakan coba lagi.");
+          toast.error("Pembayaran batal. Silakan coba lagi.");
         },
         onClose: function () {
           toast.dismiss();
@@ -71,7 +71,7 @@ const TopUpModal = ({ isOpen, onClose }: TopUpModalProps) => {
       });
     } catch (error) {
       console.error(error);
-      toast.error("Terjadi kesalahan koneksi ke server.");
+      toast.error("Koneksi internet bermasalah. Coba lagi.");
     } finally {
       setIsLoading(false);
     }

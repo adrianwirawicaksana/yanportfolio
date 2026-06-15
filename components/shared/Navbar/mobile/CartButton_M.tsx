@@ -24,9 +24,12 @@ export default function CartButton({
       }`}
       aria-label="Open shopping cart"
     >
-      <Image src="/Cart.svg" alt="Cart" width={40} height={40} />
+      <div className="relative h-full w-full flex items-center justify-center">
+        <Image src="/Cart.svg" alt="Cart" width={40} height={40} />
+      </div>
+
       {hasCartItems && (
-        <span className="absolute -top-1 -right-1 bg-red-500 text-white font-bold text-xs h-5 w-5 rounded-full flex items-center justify-center border border-white">
+        <span className="absolute -top-2 -right-2 bg-red-500 text-white font-bold text-[10px] h-5 w-5 rounded-full flex items-center justify-center border border-white">
           {totalItems}
         </span>
       )}

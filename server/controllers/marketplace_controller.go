@@ -29,19 +29,19 @@ func NewMarketplaceController(db *mongo.Database) *MarketplaceController {
 func (mc *MarketplaceController) HandleCheckout(c *gin.Context) {
 	emailVal, exists := c.Get("email")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "Sesi lu abis bre, login dulu!"})
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Sesi Anda telah berakhir. Silakan login ulang."})
 		return
 	}
 	userEmail := emailVal.(string)
 
 	var req models.CheckoutRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Data keranjang kagak valid, bre!"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Data keranjang tidak valid. Coba lagi?"})
 		return
 	}
 
 	if len(req.Items) == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Keranjang lu kosong melompong!"})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Keranjang Anda kosong. Tambahkan kartu terlebih dahulu."})
 		return
 	}
 
@@ -51,7 +51,7 @@ func (mc *MarketplaceController) HandleCheckout(c *gin.Context) {
 	var user bson.M
 	err := mc.UserCollection.FindOne(ctx, bson.M{"email": userEmail}).Decode(&user)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"message": "User dengan email ini kagak ketemu di database!"})
+		c.JSON(http.StatusNotFound, gin.H{"message": "Akun Anda tidak ditemukan. Silakan login ulang."})
 		return
 	}
 
@@ -72,7 +72,7 @@ func (mc *MarketplaceController) HandleCheckout(c *gin.Context) {
 	totalPriceInt := int(req.TotalPrice)
 
 	if currentCoins < totalPriceInt {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Waduh bre, koin lu kurang di server! Jangan nge-cheat ya."})
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Koin Anda tidak cukup untuk membeli kartu ini. Silakan top-up koin."})
 		return
 	}
 
@@ -86,7 +86,7 @@ func (mc *MarketplaceController) HandleCheckout(c *gin.Context) {
 
 	_, err = mc.UserCollection.UpdateOne(ctx, updateFilter, updateQuery)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Gagal memproses pemotongan koin dan pengiriman kartu."})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Tidak bisa menyelesaikan pembelian. Coba lagi?"})
 		return
 	}
 
@@ -110,7 +110,7 @@ func (mc *MarketplaceController) HandleCheckout(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"success":        true,
-		"message":        "Pembayaran sukses! Kartu baru telah ditambahkan ke koleksi lu.",
+		"message":        "Pembelian sukses! Kartu Pokemon baru telah ditambahkan ke koleksi Anda.",
 		"remainingCoins": newCoins,
 		"boughtItems":    req.Items,
 	})

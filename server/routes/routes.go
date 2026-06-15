@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"os"
 	"time"
 	"yanportfolio/server/controllers"
 	"yanportfolio/server/middleware"
@@ -15,12 +16,36 @@ func SetupRouter(db *mongo.Database) *gin.Engine {
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
 
-	// Konfigurasi CORS Middleware (Mengizinkan lokal dan production)
+	// helper contains function
+	// define contains here to avoid adding a new file
+	// returns true if slice contains value
+	contains := func(slice []string, val string) bool {
+		for _, s := range slice {
+			if s == val {
+				return true
+			}
+		}
+		return false
+	}
+
+	// Konfigurasi CORS Middleware (dynamic origins via FRONTEND_URL)
+	allowOrigins := []string{}
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL != "" {
+		allowOrigins = append(allowOrigins, frontendURL)
+	}
+	// Always allow Vercel production hostname if available
+	vercelURL := "https://yanportfolio.vercel.app"
+	if !contains(allowOrigins, vercelURL) {
+		allowOrigins = append(allowOrigins, vercelURL)
+	}
+	// Include localhost for non-production (developer) runs
+	if os.Getenv("NODE_ENV") != "production" {
+		allowOrigins = append([]string{"http://localhost:3000"}, allowOrigins...)
+	}
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"http://localhost:3000",
-			"https://yanportfolio.vercel.app",
-		},
+		AllowOrigins:     allowOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -35,6 +60,7 @@ func SetupRouter(db *mongo.Database) *gin.Engine {
 		api.POST("/register", controllers.Register)
 		api.POST("/register/verify", controllers.VerifyOTP)
 		api.POST("/login", controllers.Login)
+		api.POST("/auth/logout", controllers.Logout)
 
 		api.GET("/auth/google", controllers.GoogleLogin)
 		api.GET("/auth/google/callback", controllers.GoogleCallback)

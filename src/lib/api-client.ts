@@ -13,8 +13,21 @@ export class ApiClient {
     options?: RequestInit,
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    let token: string | null = null;
+
+    if (typeof window !== "undefined") {
+      // Try localStorage first
+      token = localStorage.getItem("token");
+
+      // If no token in localStorage, try to get from cookie
+      if (!token) {
+        const cookies = document.cookie.split("; ");
+        const tokenCookie = cookies.find((c) => c.startsWith("token="));
+        if (tokenCookie) {
+          token = tokenCookie.substring(6);
+        }
+      }
+    }
 
     // PERUBAHAN DI SINI: Menggunakan Record<string, string> agar aman ditambah properti dinamis
     const headers: Record<string, string> = {
@@ -30,6 +43,7 @@ export class ApiClient {
       const response = await fetch(url, {
         ...options,
         headers, // Sekarang di-passing ke fetch dengan aman tanpa error type
+        credentials: "include",
       });
 
       if (!response.ok) {

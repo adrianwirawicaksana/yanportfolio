@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // State untuk toggle password
 
-  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
+  const BACKEND_URL = (typeof window !== 'undefined' ? window.__BACKEND_URL__ || null : null) || process.env.NEXT_PUBLIC_BACKEND_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000') || "http://localhost:8080";
 
   const { refreshProfile } = useAuth();
   const router = useRouter();
@@ -25,21 +25,30 @@ export default function LoginPage() {
       const response = await authService.login({ email, password });
 
       if (response.error || !response.data?.token) {
-        return toast.error(response.error || "Gagal login. Coba lagi.");
+        return toast.error(response.error || "Login gagal. Periksa email dan password Anda.");
       }
 
-      localStorage.setItem("token", response.data.token);
-      await refreshProfile();
+      const token = response.data.token;
+      localStorage.setItem("token", token);
+      // Also store token in cookie for server-side middleware
+      document.cookie = `token=${token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
+      // Wait for profile to be refreshed before redirecting
+      try {
+        await refreshProfile();
+      } catch (error) {
+        console.error("Failed to refresh profile:", error);
+      }
       toast.success("Login Sukses! 🎉");
       router.push("/dashboard");
     } catch (err) {
       console.error(err);
-      toast.error("Terjadi kesalahan saat login.");
+      toast.error("Ada masalah saat login. Pastikan koneksi internet Anda stabil.");
     }
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${BACKEND_URL}/api/auth/google`;
+    const target = `${BACKEND_URL.replace(/\/$/, '')}/api/auth/google`;
+    window.location.href = target;
   };
 
   return (

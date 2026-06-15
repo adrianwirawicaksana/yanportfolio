@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect, useCallback, useMemo } from "react";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import Image from "next/image";
-import { dashboardService } from "@/src/services";
+import { useAuth } from "@/src/context";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8080";
 
@@ -16,69 +16,51 @@ interface ProfileData {
 }
 
 const Page = () => {
+  const { user, refreshProfile } = useAuth(); 
+
   const [profile, setProfile] = useState<ProfileData>({
-    name: "Loading...",
-    email: "Loading...",
-    bio: "Loading...",
-    avatar_url: "",
+    name: user?.name || "Nama Trainer",
+    email: user?.email || "",
+    bio: user?.bio || "Belum ada bio.",
+    avatar_url: user?.avatar_url || "",
   });
 
   const [formInput, setFormInput] = useState<ProfileData>({ ...profile });
-  const [avatarPreview, setAvatarPreview] = useState<string>("/User.svg");
+  const [avatarPreview, setAvatarPreview] = useState<string>(user?.avatar_url || "/User.svg");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string>("");
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  // ================= FETCH DATA PROFIL DARI MONGODB =================
   useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        const response = await dashboardService.getProfile();
-
-        if (response.error || !response.data) {
-          if (response.statusCode === 401) {
-            console.error("Waduh, token lu angus atau gak valid, bre.");
-          }
-          throw new Error(response.error || "Gagal mengambil data profil");
-        }
-
-        const userData = response.data;
-
-        const mappedData = {
-          name: userData.name || "No Name Set",
-          email: userData.email || "",
-          bio: userData.bio || "Belum ada bio.",
-          avatar_url: userData.avatar_url || "",
-        };
-
-        setProfile(mappedData);
-        setFormInput(mappedData);
-
-        if (userData.avatar_url) {
-          setAvatarPreview(userData.avatar_url);
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
+    if (user) {
+      const newProfileData = {
+        name: user.name || "Nama Trainer",
+        email: user.email || "",
+        bio: user.bio || "Belum ada bio.",
+        avatar_url: user.avatar_url || "",
+      };
+      setProfile(newProfileData);
+      setFormInput(newProfileData);
+      if (user.avatar_url) {
+        setAvatarPreview(user.avatar_url);
       }
-    };
+    }
+  }, [user?.name, user?.email, user?.bio, user?.avatar_url]);
 
-    fetchProfileData();
-  }, []);
-  // ===================================================================
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormInput((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
+  }, []);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        toast.error("Ukuran file terlalu besar, bre! Maksimal 2MB.");
+        toast.error("Ukuran file terlalu besar. Maksimal 2MB.");
         return;
       }
 
@@ -88,16 +70,16 @@ const Page = () => {
       const objectUrl = URL.createObjectURL(file);
       setAvatarPreview(objectUrl);
     }
-  };
+  }, []);
 
-  // ================= SUBMIT DATA BARU KE GOLANG =================
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsSaving(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) {
-        toast.error("Token hilang! Silakan login ulang, bre.");
+        toast.error("Sesi Anda telah berakhir. Silakan login ulang.");
         return;
       }
 
@@ -109,11 +91,8 @@ const Page = () => {
         formData.append("avatar", selectedFile);
       }
 
-      // FIX AMAN: Buat headers instansiasi object biar gak ngerusak boundary FormData
       const customHeaders = new Headers();
       customHeaders.append("Authorization", `Bearer ${token}`);
-      // PENTING: JANGAN menambahkan customHeaders.append("Content-Type", "multipart/form-data").
-      // Biarkan browser yang mengaturnya secara otomatis bersama boundary-nya.
 
       const response = await fetch(`${BACKEND_URL}/api/dashboard/profile/update`, {
         method: "PUT",
@@ -122,7 +101,7 @@ const Page = () => {
       });
 
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Gagal mengupdate database");
+      if (!response.ok) throw new Error(result.error || "Tidak bisa menyimpan profil. Coba lagi?");
 
       const updatedAvatar = result.data?.avatar_url || profile.avatar_url;
 
@@ -139,20 +118,40 @@ const Page = () => {
 
       setFileName("");
       setSelectedFile(null);
-      toast.success("Profil berhasil diperbarui ke MongoDB, bre! 🔥");
+      await refreshProfile();
+      
+      toast.success("Profil berhasil diperbarui! ✨");
     } catch (error: unknown) {
       console.error(error);
-      const message = error instanceof Error ? error.message : "Waduh, gagal save ke database.";
+      const message = error instanceof Error ? error.message : "Ada masalah saat menyimpan profil. Coba lagi?";
       toast.error(message);
+    } finally {
+      setIsSaving(false);
     }
-  };
-  // ===================================================================
+  }, [formInput, profile.avatar_url, selectedFile]);
+
+  const profileDisplayData = useMemo(
+    () => ({
+      name: profile.name,
+      email: profile.email,
+      bio: profile.bio,
+    }),
+    [profile.name, profile.email, profile.bio]
+  );
+
+  const formData = useMemo(
+    () => ({
+      name: formInput.name,
+      email: formInput.email,
+      bio: formInput.bio,
+    }),
+    [formInput.name, formInput.email, formInput.bio]
+  );
 
   return (
     <div className="h-auto lg:h-screen w-full bg-yellow-300 text-gray-800 pt-24 flex flex-col lg:overflow-hidden">
       <div className="h-auto lg:h-[calc(100vh-6rem)] w-full flex flex-col lg:flex-row border-t-3 lg:border-t-6 border-yellow-500 lg:overflow-hidden">
         
-        {/* Sidebar Preview */}
         <div className="h-auto lg:h-full w-full flex flex-col lg:max-w-xs xl:max-w-md border-yellow-500 border-b-3 lg:border-b-0 border-r-0 lg:border-r-6 shrink-0 py-6 lg:py-0">
           <div className="lg:h-[70%] flex flex-col gap-4 lg:gap-6 items-center justify-center p-4">
             <div className="h-36 w-36 md:h-44 md:w-44 lg:h-50 lg:w-50 relative bg-linear-to-t from-gray-200 to-white border-3 lg:border-6 border-yellow-500 rounded-full overflow-hidden shrink-0">
@@ -171,14 +170,14 @@ const Page = () => {
                 Welcome!
                 <br />
                 <span className="font-title font-bold text-3xl lg:text-4xl text-blue-600 dynamic-text">
-                  {profile.name}
+                  {profileDisplayData.name}
                 </span>
               </h1>
               <p className="text-base text-red-500 font-bold">
-                {profile.email}
+                {profileDisplayData.email}
               </p>
               <p className="text-xs md:text-sm text-gray-600 max-w-xs mt-1 leading-relaxed">
-                {profile.bio}
+                {profileDisplayData.bio}
               </p>
             </div>
           </div>
@@ -199,14 +198,13 @@ const Page = () => {
           </div>
         </div>
 
-        {/* Form Area */}
         <div className="flex-1 p-4 md:p-6 lg:p-8 flex flex-col lg:overflow-hidden">
           <div className="mb-6 shrink-0 text-center lg:text-left">
             <h1 className="text-2xl md:text-3xl font-bold font-title text-gray-900">
               Edit Profile
             </h1>
-            <p className="text-gray-600 text-xs md:text-sm">
-              Kelola informasi detail akun Trainer lo di sini.
+            <p className="text-center lg:text-left text-gray-600 text-xs md:text-sm">
+              Kelola informasi detail akun Trainer Anda di sini.
             </p>
           </div>
 
@@ -260,7 +258,7 @@ const Page = () => {
                   <input
                     type="text"
                     name="name"
-                    value={formInput.name}
+                    value={formData.name}
                     onChange={handleInputChange}
                     className="w-full font-title font-medium text-sm md:text-base px-4 py-2.5 bg-white border-3 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-hidden duration-200"
                   />
@@ -273,11 +271,14 @@ const Page = () => {
                   <input
                     type="email"
                     name="email"
-                    value={formInput.email}
+                    value={formData.email}
                     onChange={handleInputChange}
                     disabled
-                    className="w-full font-title font-medium text-sm md:text-base px-4 py-2.5 bg-white border-3 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-hidden duration-200"
+                    className="w-full font-title font-medium text-sm md:text-base px-4 py-2.5 bg-gray-100 border-3 border-gray-300 rounded-xl text-gray-500 cursor-not-allowed opacity-75 duration-200"
                   />
+                  <p className="text-xs text-gray-500 font-medium mt-1">
+                    💡 Email tidak dapat diubah karena terikat permanen pada akun Anda.
+                  </p>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
@@ -287,7 +288,7 @@ const Page = () => {
                   <textarea
                     rows={4}
                     name="bio"
-                    value={formInput.bio}
+                    value={formData.bio}
                     onChange={handleInputChange}
                     className="w-full font-title font-medium text-sm md:text-base px-4 py-2.5 bg-white border-3 border-gray-300 rounded-xl focus:border-blue-500 focus:outline-hidden duration-200 resize-none"
                   />
@@ -298,9 +299,10 @@ const Page = () => {
             <div className="shrink-0 p-4 md:p-6 bg-gray-50 border-t border-gray-200 flex flex-col sm:flex-row lg:justify-start gap-3 rounded-b-2xl">
               <button
                 type="submit"
-                className="sm:w-40 text-center font-title font-bold text-base md:text-lg py-2.5 px-6 bg-linear-to-t from-blue-700 to-blue-500 border-3 border-blue-700 text-white rounded-xl hover:scale-105 active:scale-95 duration-300 transition-all cursor-pointer"
+                disabled={isSaving}
+                className={`sm:w-40 text-center font-title font-bold text-base md:text-lg py-2.5 px-6 bg-linear-to-t from-blue-700 to-blue-500 border-3 border-blue-700 text-white rounded-xl duration-300 transition-all ${isSaving ? "opacity-60 cursor-not-allowed hover:scale-100" : "hover:scale-105 active:scale-95 cursor-pointer"}`}
               >
-                Save Changes
+                {isSaving ? "Menyimpan..." : "Save Changes"}
               </button>
             </div>
           </form>

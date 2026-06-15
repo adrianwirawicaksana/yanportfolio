@@ -59,7 +59,7 @@ export default function Cart({
           </div>
 
           {totalItems > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white font-bold text-sm h-6 w-6 rounded-full flex items-center justify-center border-2 border-white animate-bounce">
+            <span className="absolute -top-3 -right-3 bg-red-500 text-white font-bold text-[10px] h-6 w-6 rounded-full flex items-center justify-center border-2 border-white animate-bounce">
               {totalItems}
             </span>
           )}

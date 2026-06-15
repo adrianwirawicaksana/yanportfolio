@@ -72,7 +72,7 @@ function VerifyOTPContent() {
     // 6. Gabungkan array OTP menjadi satu string utuh (cth: "123456")
     const otpString = otp.join("");
     if (otpString.length < 6) {
-      toast.error("Silakan masukkan kode OTP 6 digit secara lengkap! ⚠️");
+      toast.error("Silakan masukkan kode OTP 6 digit lengkap.");
       return;
     }
 
@@ -80,14 +80,14 @@ function VerifyOTPContent() {
       const response = await authService.verifyOTP({ email, otp: otpString });
 
       if (response.error) {
-        return toast.error(response.error || "Verifikasi gagal ❌");
+        return toast.error(response.error || "Kode OTP salah atau tidak valid. Coba lagi.");
       }
 
       toast.success("Akun berhasil diverifikasi! 🎉 Silakan masuk.");
       window.location.href = "/auth/login";
     } catch (err) {
       console.error(err);
-      toast.error("Terjadi kesalahan, silakan coba lagi.");
+      toast.error("Ada masalah saat verifikasi. Silakan coba lagi.");
     } finally {
       setLoading(false);
     }
