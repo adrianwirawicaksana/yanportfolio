@@ -11,14 +11,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// Terima parameter database mongo di fungsi SetupRouter agar bisa di-pass ke controller marketplace
 func SetupRouter(db *mongo.Database) *gin.Engine {
 	r := gin.Default()
 	r.SetTrustedProxies(nil)
 
-	// helper contains function
-	// define contains here to avoid adding a new file
-	// returns true if slice contains value
 	contains := func(slice []string, val string) bool {
 		for _, s := range slice {
 			if s == val {
@@ -28,18 +24,15 @@ func SetupRouter(db *mongo.Database) *gin.Engine {
 		return false
 	}
 
-	// Konfigurasi CORS Middleware (dynamic origins via FRONTEND_URL)
 	allowOrigins := []string{}
 	frontendURL := os.Getenv("FRONTEND_URL")
 	if frontendURL != "" {
 		allowOrigins = append(allowOrigins, frontendURL)
 	}
-	// Always allow Vercel production hostname if available
 	vercelURL := "https://yanportfolio.vercel.app"
 	if !contains(allowOrigins, vercelURL) {
 		allowOrigins = append(allowOrigins, vercelURL)
 	}
-	// Include localhost for non-production (developer) runs
 	if os.Getenv("NODE_ENV") != "production" {
 		allowOrigins = append([]string{"http://localhost:3000"}, allowOrigins...)
 	}

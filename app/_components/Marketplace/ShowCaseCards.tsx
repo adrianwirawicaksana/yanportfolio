@@ -17,7 +17,6 @@ const ShowCaseCards = ({ cards }: Props) => {
         <div className="flex flex-wrap justify-center gap-8 px-2 sm:px-4 md:px-6">
           {cards.slice(0, 10).map((card, index) => (
             <ShowCaseCardItem key={card.id}>
-              {/* PENTING: Pastikan di dalam CardPokemon ini Anda me-render `card.images.small`, BUKAN `large`! */}
               <CardPokemon card={card} priority={index === 0} />
             </ShowCaseCardItem>
           ))}

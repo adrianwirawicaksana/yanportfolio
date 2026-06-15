@@ -3,7 +3,7 @@
 import { toast } from "react-hot-toast";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { HiEye, HiEyeOff } from "react-icons/hi"; // Ambil icon mata
+import { HiEye, HiEyeOff } from "react-icons/hi";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { authService } from "@/src/services";
@@ -12,7 +12,7 @@ import { useAuth } from "@/src/context";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State untuk toggle password
+  const [showPassword, setShowPassword] = useState(false);
 
   const BACKEND_URL = (typeof window !== 'undefined' ? window.__BACKEND_URL__ || null : null) || process.env.NEXT_PUBLIC_BACKEND_URL || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000') || "http://localhost:8080";
 
@@ -30,9 +30,7 @@ export default function LoginPage() {
 
       const token = response.data.token;
       localStorage.setItem("token", token);
-      // Also store token in cookie for server-side middleware
       document.cookie = `token=${token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
-      // Wait for profile to be refreshed before redirecting
       try {
         await refreshProfile();
       } catch (error) {
@@ -52,19 +50,11 @@ export default function LoginPage() {
   };
 
   return (
-    /* - grid-cols-1: Di HP/Mobile hanya 1 kolom penuh.
-       - md:grid-cols-6: Mulai dari ukuran tablet ke atas, layar dibagi jadi 6 kolom virtual.
-    */
     <div className="min-h-screen w-full grid grid-cols-1 md:grid-cols-6 bg-yellow-300">
       
-      {/* KONTAINER KIRI: Form Login */}
-      {/* - md:col-span-3 -> Di layar Tablet (medium), formulir mengambil jatah 3 kolom (Rasio 3:3)
-          - lg:col-span-2 -> Di layar Desktop (large), jatahnya mengecil jadi 2 kolom (Rasio 2:4)
-      */}
       <div className="w-full min-h-screen bg-white flex justify-center items-center p-8 md:col-span-3 lg:col-span-2 md:border-r-2 md:border-gray-300">
         <div className="w-full max-w-md transform transition-all">
           
-          {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-extrabold text-gray-800 tracking-tight font-title">
               Selamat Datang
@@ -74,7 +64,6 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Form Auth Manual */}
           <form onSubmit={handleManualLogin} className="space-y-5">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -94,19 +83,17 @@ export default function LoginPage() {
               <label className="block text-sm font-semibold text-gray-700 mb-1">
                 Password
               </label>
-              {/* Pembungkus input dirubah jadi relative agar icon bisa absolut di kanan */}
               <div className="relative flex items-center">
                 <input
-                  type={showPassword ? "text" : "password"} // Dinamis tergantung state
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pr-12 pl-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-gray-800 bg-gray-50 transition-all text-sm"
                   placeholder="••••••••"
                   required
                 />
-                {/* Tombol Toggle Mata */}
                 <button
-                  type="button" // WAJIB 'button' agar tidak mentrigger submit form saat diklik
+                  type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 text-gray-400 hover:text-gray-600 focus:outline-none cursor-pointer transition-colors"
                 >
@@ -127,7 +114,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Divider */}
           <div className="relative flex py-5 items-center">
             <div className="grow border-t border-gray-200"></div>
             <span className="shrink mx-4 text-gray-400 text-xs font-medium uppercase tracking-wider">
@@ -136,7 +122,6 @@ export default function LoginPage() {
             <div className="grow border-t border-gray-200"></div>
           </div>
 
-          {/* Tombol Google */}
           <button
             type="button"
             onClick={handleGoogleLogin}
@@ -146,7 +131,6 @@ export default function LoginPage() {
             <span>Sign in with Google</span>
           </button>
 
-          {/* Link ke Register */}
           <div className="text-center mt-6 text-sm">
             <p className="text-gray-500">
               Belum punya akun?{" "}
@@ -161,7 +145,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* KONTAINER KANAN: Tempat Banner / Gambar */}
       <div className="hidden md:flex min-h-screen relative overflow-hidden md:col-span-3 lg:col-span-4">
         <Image
           src="/Pokemon.svg"

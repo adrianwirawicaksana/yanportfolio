@@ -117,12 +117,10 @@ func GoogleCallback(c *gin.Context) {
 
 	frontendURL := os.Getenv("FRONTEND_URL")
 	if frontendURL == "" {
-		// FRONTEND_URL must ALWAYS be set — no hardcoded fallbacks
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Konfigurasi belum lengkap. Hubungi admin."})
 		return
 	}
 
-	// Redirect to /auth/success with token in query param for frontend to handle
 	targetURL := fmt.Sprintf("%s/auth/success?token=%s", frontendURL, tokenString)
 	c.Redirect(http.StatusTemporaryRedirect, targetURL)
 }
