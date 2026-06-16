@@ -18,7 +18,7 @@ function CardDetailModalComponent({ card, onClose }: CardDetailModalProps) {
   }, []);
 
   const handleImageError = useCallback(() => {
-    setIsImageLoaded(true); // Still mark as loaded to prevent stuck state
+    setIsImageLoaded(true); 
   }, []);
 
   const handleBackdropClick = useCallback(() => {

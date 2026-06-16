@@ -12,13 +12,13 @@ function TrainerActionsComponent({ onLogout, isLoggingOut = false }: TrainerActi
 
       <Link
         href="/dashboard/setting/profile"
-        className="block w-full text-center font-title font-bold text-base sm:text-lg py-2 sm:py-2.5 md:py-3 px-3 bg-linear-to-t from-gray-200 to-white border-2 sm:border-2 md:border-3 border-yellow-500 text-yellow-600 rounded-lg sm:rounded-xl hover:scale-105 active:scale-95 duration-300 transition-all ease-in-out shadow-xs"
+        className="block w-full text-center font-title font-bold text-lg py-2 sm:py-2.5 md:py-3 px-3 bg-linear-to-t from-gray-200 to-white border-2 sm:border-2 md:border-3 border-yellow-500 text-yellow-600 rounded-lg sm:rounded-xl hover:scale-105 active:scale-95 duration-300 transition-all ease-in-out shadow-xs"
       >
         Edit Profile
       </Link>
       <Link
         href="/"
-        className="block w-full text-center font-title font-bold text-base sm:text-lg py-2 sm:py-2.5 md:py-3 px-3 bg-linear-to-t from-blue-700 to-blue-500 border-2 sm:border-2 md:border-3 border-blue-700 text-white rounded-lg sm:rounded-xl hover:scale-105 active:scale-95 duration-300 transition-all ease-in-out shadow-xs"
+        className="block w-full text-center font-title font-bold text-lg py-2 sm:py-2.5 md:py-3 px-3 bg-linear-to-t from-blue-700 to-blue-500 border-2 sm:border-2 md:border-3 border-blue-700 text-white rounded-lg sm:rounded-xl hover:scale-105 active:scale-95 duration-300 transition-all ease-in-out shadow-xs"
       >
         Back to Home
       </Link>
@@ -26,7 +26,7 @@ function TrainerActionsComponent({ onLogout, isLoggingOut = false }: TrainerActi
         type="button"
         onClick={onLogout}
         disabled={isLoggingOut}
-        className={`block w-full text-center font-title font-bold text-base sm:text-lg py-2 sm:py-2.5 md:py-3 px-3 bg-linear-to-t from-red-600 to-red-500 border-2 sm:border-2 md:border-3 border-red-700 text-white rounded-lg sm:rounded-xl duration-300 transition-all ease-in-out shadow-xs ${isLoggingOut ? "opacity-60 cursor-not-allowed hover:scale-100" : "hover:scale-105 active:scale-95"}`}
+        className={`block w-full text-center font-title font-bold text-lg py-2 sm:py-2.5 md:py-3 px-3 bg-linear-to-t from-red-600 to-red-500 border-2 sm:border-2 md:border-3 border-red-700 text-white rounded-lg sm:rounded-xl duration-300 transition-all ease-in-out shadow-xs ${isLoggingOut ? "opacity-60 cursor-not-allowed hover:scale-100" : "hover:scale-105 active:scale-95"}`}
       >
         {isLoggingOut ? "Logging out..." : "Logout"}
       </button>
