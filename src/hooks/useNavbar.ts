@@ -51,7 +51,9 @@ export function useNavbar() {
       const response = await marketplaceService.checkout(cartItems, totalPrice);
 
       if (!response.error) {
-        toast.success("🎉 Transaksi sukses, bre! Koin mu berhasil didebet.");
+        toast.success(
+          "Pembayaran berhasil. Saldo koin Anda telah berhasil terpotong.",
+        );
         clearCart();
         await refreshProfile();
         setIsCartDropdownOpen(false);

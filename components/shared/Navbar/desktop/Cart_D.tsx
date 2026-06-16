@@ -78,7 +78,7 @@ export default function Cart({
 
             <div className="max-h-64 overflow-y-auto flex flex-col divide-y divide-gray-200">
               {cartItems.length === 0 ? (
-                <div className="p-8 text-center text-gray-400 font-medium">Keranjang kosong, mari belanja bre!</div>
+                <div className="p-8 text-center text-gray-400 font-medium">Keranjang kosong. Tambahkan item ke keranjang untuk melanjutkan.</div>
               ) : (
                 cartItems.map((item) => (
                   <div key={item.id} className="p-3 flex gap-3 items-center bg-gray-50 hover:bg-yellow-50/50 duration-150">
@@ -107,7 +107,7 @@ export default function Cart({
             {cartItems.length > 0 && (
               <div className="p-4 bg-gray-100 border-t-2 border-gray-200 flex flex-col gap-2 shrink-0">
                 <div className="flex justify-between items-center text-sm font-medium text-gray-600">
-                  <span>Coin Lu Saat Ini:</span>
+                  <span>Saldo koin Anda:</span>
                   <span className="font-bold text-gray-900">{isLoading ? "..." : `${userCoins.toLocaleString("id-ID")} C`}</span>
                 </div>
                 <div className="flex justify-between items-center border-t border-gray-200 pt-2 font-title font-bold text-base">
@@ -116,7 +116,7 @@ export default function Cart({
                 </div>
 
                 {!isCoinEnough && !isLoading && (
-                  <div className="text-[11px] text-center bg-red-100 text-red-600 py-1 rounded font-semibold mt-1">⚠️ Waduh bre, koin lu gak cukup buat bayar!</div>
+                  <div className="text-[11px] text-center bg-red-100 text-red-600 py-1 rounded font-semibold mt-1">Saldo koin tidak cukup untuk menyelesaikan pembayaran.</div>
                 )}
 
                 <Button 
@@ -153,7 +153,7 @@ export default function Cart({
             <div className="p-4 space-y-3">
               {cartItems.length === 0 ? (
                 <div className="rounded-2xl border border-gray-200 bg-gray-50 p-6 text-center text-gray-500 font-medium">
-                  Keranjang kosong, bre! Tambahin kartu dulu ya.
+                  Keranjang kosong. Tambahkan kartu terlebih dahulu.
                 </div>
               ) : (
                 <div className="space-y-3">
