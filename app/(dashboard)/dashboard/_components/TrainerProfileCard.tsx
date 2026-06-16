@@ -17,18 +17,18 @@ function TrainerProfileCardComponent({
   isLoading,
 }: TrainerProfileCardProps) {
   return (
-    <div className="flex-1 w-full flex flex-col gap-4 lg:gap-6 items-center justify-start p-4 md:pb-8 lg:pb-10">
-      <div className="h-36 w-36 md:h-44 md:w-44 lg:h-50 lg:w-50 relative bg-linear-to-t from-gray-200 to-white border-3 lg:border-6 border-yellow-500 rounded-full overflow-hidden shadow-sm mx-auto">
+    <div className="w-full h-full flex flex-col gap-4 lg:gap-6 items-center justify-center p-4 md:pb-8 lg:pb-10">
+      <div className="h-36 w-36 md:h-44 md:w-44 lg:h-52 lg:w-52 relative bg-linear-to-t from-gray-200 to-white border-3 lg:border-6 border-yellow-500 rounded-full overflow-hidden shadow-sm shrink-0">
         <Image
           src={avatarUrl}
           alt="Trainer Avatar"
           fill
-          sizes="(max-width: 768px) 144px, (max-width: 1024px) 176px, 200px"
+          sizes="(max-width: 768px) 144px, (max-width: 1024px) 176px, 208px"
           priority
           className="object-cover object-center"
         />
       </div>
-      <div className="flex flex-col items-center gap-1 px-4 text-center w-full">
+      <div className="flex flex-col items-center gap-1 px-4 text-center w-full shrink-0">
         <h1 className="text-lg md:text-xl leading-snug">
           Welcome!
           <br />

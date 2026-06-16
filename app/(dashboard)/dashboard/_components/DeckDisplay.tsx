@@ -20,14 +20,14 @@ function DeckDisplayComponent({ cards, onCardSelect }: DeckDisplayProps) {
   }, [onCardSelect]);
 
   return (
-    <div className="flex flex-col gap-6 h-full">
+    <div className="flex flex-col gap-6 w-full h-full">
       <div className="flex justify-between items-center border-b-4 border-yellow-500 pb-3 shrink-0">
         <h2 className="font-title font-bold text-2xl md:text-3xl text-gray-900 tracking-wide">
           🎴 My Trainer Deck ({cards.length})
         </h2>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 pb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 pb-6 overflow-y-auto">
         {cards.map((card, index) => (
           <div
             key={card.id || index}

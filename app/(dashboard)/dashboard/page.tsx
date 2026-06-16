@@ -68,10 +68,10 @@ const Page = () => {
 
   return (
     <div className="min-h-screen w-full bg-yellow-300 text-gray-800 pt-24 flex flex-col">
-      <div className="flex-1 min-h-screen md:h-[calc(100vh-6rem)] w-full flex flex-col md:flex-row border-t-3 md:border-t-6 border-yellow-500">
+      <div className="flex-1 h-screen md:h-[calc(100vh-6rem)] w-full flex flex-col md:flex-row border-t-3 md:border-t-6 border-yellow-500">
         
-        <div className="h-auto md:h-full w-full flex flex-col md:max-w-md border-yellow-500 border-b-3 md:border-b-0 border-r-0 md:border-r-6 shrink-0 py-6 md:py-0 md:overflow-y-auto">
-          <div className="flex-1 flex items-center justify-center">
+        <div className="h-auto md:h-screen w-full md:w-96 lg:w-120 flex flex-col border-yellow-500 border-b-3 md:border-b-0 border-r-0 md:border-r-6 shrink-0 py-6 md:py-0 md:overflow-y-auto">
+          <div className="flex-1 flex items-center justify-center min-h-0">
             <TrainerProfileCard
               name={profileData.name}
               email={profileData.email}
@@ -84,14 +84,16 @@ const Page = () => {
           <TrainerActions onLogout={handleLogout} isLoggingOut={isLoggingOut} />
         </div>
 
-        <div className="flex-1 min-h-screen md:h-full p-6 md:p-8 bg-yellow-300 md:overflow-y-auto flex flex-col justify-center">
-          {loading ? (
-            <DashboardCardsSkeleton />
-          ) : cards.length === 0 ? (
-            <EmptyDeckMessage />
-          ) : (
-            <DeckDisplay cards={cards} onCardSelect={handleSelectCard} />
-          )}
+        <div className="flex-1 h-screen w-full p-6 md:p-8 bg-yellow-300 md:overflow-y-auto flex flex-col justify-center items-center overflow-hidden">
+          <div className="w-full h-full max-w-6xl flex flex-col justify-center items-center">
+            {loading ? (
+              <DashboardCardsSkeleton />
+            ) : cards.length === 0 ? (
+              <EmptyDeckMessage />
+            ) : (
+              <DeckDisplay cards={cards} onCardSelect={handleSelectCard} />
+            )}
+          </div>
         </div>
       </div>
 

@@ -2,7 +2,7 @@ import { memo } from "react";
 
 function EmptyDeckMessageComponent() {
   return (
-    <div className="min-h-full w-full flex flex-col justify-center items-center gap-3 sm:gap-4 md:gap-6 text-center px-4 sm:px-6 py-8 sm:py-12 md:py-16">
+    <div className="w-full h-full flex flex-col justify-center items-center gap-3 sm:gap-4 md:gap-6 text-center px-4 sm:px-6 py-8 sm:py-12 md:py-16">
       <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl animate-bounce duration-1000">
         🃏
       </div>

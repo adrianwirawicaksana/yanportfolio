@@ -8,7 +8,7 @@ interface TrainerActionsProps {
 
 function TrainerActionsComponent({ onLogout, isLoggingOut = false }: TrainerActionsProps) {
   return (
-    <div className="mt-auto w-full border-t border-yellow-500 md:border-t-3 flex flex-col items-center md:items-stretch justify-end gap-3 sm:gap-2.5 md:gap-3 px-3 sm:px-4 md:px-6 py-3">
+    <div className="w-full border-t-3 border-yellow-500 flex flex-col items-stretch justify-end gap-3 sm:gap-2.5 md:gap-3 px-3 sm:px-4 md:px-6 py-4 md:py-6 shrink-0">
 
       <Link
         href="/dashboard/setting/profile"
