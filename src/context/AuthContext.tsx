@@ -71,7 +71,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    // Only run on client-side after hydration
     setMounted(true);
     const cachedUser = getCachedUser();
     if (cachedUser) {
